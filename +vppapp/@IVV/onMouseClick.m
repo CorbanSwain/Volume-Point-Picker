@@ -19,20 +19,20 @@ if self.IsLocked
    end
    self.Parent.addPoint(self.CurrentVoxelIndex);
    [P.xLock, P.yLock, P.zLock] = deal(false);
-elseif reg ~= vppapp.ProjViewRegion.Outside
+elseif reg ~= vpp.ProjViewRegion.Outside
    ind = self.CurrentVoxelIndex;
    switch reg
-      case vppapp.ProjViewRegion.XY
+      case vpp.ProjViewRegion.XY
          P.xLock = true;
          P.yLock = true;
          vec = squeeze(self.VolIm(ind(1), ind(2), :));
          pstr = 'z';
-      case vppapp.ProjViewRegion.XZ
+      case vpp.ProjViewRegion.XZ
          P.xLock = true;
          P.zLock = true;
          vec = squeeze(self.VolIm(:, ind(2), ind(3)));
          pstr = 'y';
-      case vppapp.ProjViewRegion.YZ
+      case vpp.ProjViewRegion.YZ
          P.yLock = true;
          P.zLock = true;
          vec = squeeze(self.VolIm(ind(1), :, ind(3)));

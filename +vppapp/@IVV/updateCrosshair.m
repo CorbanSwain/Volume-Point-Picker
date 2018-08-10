@@ -1,5 +1,5 @@
 function updateCrosshair(self, varargin)
-% % L = utils.Logger('vppapp.IVV.updateCrosshair');
+% % L = utils.Logger('vpp.IVV.updateCrosshair');
 % persistent t;
 % try
 %    if nargin == 2 && strcmpi(varargin{1}, 'clear')
@@ -25,7 +25,7 @@ helper(self);
 end
 
 function helper(self)
-%L = utils.Logger('vppapp.IVV.updateCrosshair>helper');
+%L = utils.Logger('vpp.IVV.updateCrosshair>helper');
 xh = self.Crosshair;
 xhGap = self.CrosshairGap;
 P = self.CurrentPoint;

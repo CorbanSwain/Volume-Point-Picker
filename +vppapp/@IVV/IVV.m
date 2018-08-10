@@ -4,11 +4,11 @@ classdef IVV < handle
    
    properties
       DoAllowInteraction (1, 1) logical = false
-      ProjView vppapp.ProjectionView
+      ProjView vpp.ProjectionView
       FileName
       InitialPosition
       IsSettingPoint = false
-      CurrentRegion = vppapp.ProjViewRegion.XY
+      CurrentRegion = vpp.ProjViewRegion.XY
       VolIm
    end
    
@@ -19,7 +19,7 @@ classdef IVV < handle
          'x', 0.5, 'y', 0.5, 'z', 0.5, ...
          'xLock', false, 'yLock', false, 'zLock', false, ...
          'xClip', 0, 'yClip', 0, 'zClip', -1)
-      Parent volumePointPicker
+      Parent vpp.VolumePointPicker
       Figure
       Axis
       Image
@@ -118,7 +118,7 @@ classdef IVV < handle
       %% Parent Property
       function didSetParent(self)
          disp('Setint up projection view');
-         self.ProjView = vppapp.ProjectionView(self.VolIm);
+         self.ProjView = vpp.ProjectionView(self.VolIm);
       end
       
       %% Figure Property
@@ -217,7 +217,7 @@ classdef IVV < handle
          function updateP(x, ir)
             lockParam = [x 'Lock'];
             clipParam = [x 'Clip'];
-            if ~P.(lockParam) && mouseReg ~= vppapp.ProjViewRegion.(ir)
+            if ~P.(lockParam) && mouseReg ~= vpp.ProjViewRegion.(ir)
                P.(x) = mouseP.(x);
                P.(clipParam) = mouseP.(clipParam);
             end
@@ -253,14 +253,14 @@ classdef IVV < handle
          inQuery = boolean([P.xClip, P.yClip, P.zClip]);
          if sum(inQuery) == 1
             if inQuery(3)
-               reg = vppapp.ProjViewRegion.XY;
+               reg = vpp.ProjViewRegion.XY;
             elseif inQuery(2)
-               reg = vppapp.ProjViewRegion.XZ;
+               reg = vpp.ProjViewRegion.XZ;
             else
-               reg = vppapp.ProjViewRegion.YZ;
+               reg = vpp.ProjViewRegion.YZ;
             end
          else
-            reg = vppapp.ProjViewRegion.Outside;
+            reg = vpp.ProjViewRegion.Outside;
          end
       end
       

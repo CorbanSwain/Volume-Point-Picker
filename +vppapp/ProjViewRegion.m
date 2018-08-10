@@ -5,6 +5,4 @@ classdef ProjViewRegion
       YZ
       Outside
    end
-   
-   
 end
