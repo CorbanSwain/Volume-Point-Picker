@@ -1,5 +1,5 @@
 function updateImage(self, varargin)
-% % L = utils.Logger('vpp.IVV.updateImage');
+% % L = utils.Logger('IVV.updateImage');
 % persistent t;
 % try
 %    if nargin == 2 && strcmpi(varargin{1}, 'clear')
@@ -25,7 +25,7 @@ helper(self);
 end
 
 function helper(self)
-%L = utils.Logger('vpp.IVV.updateImage>helper');
+%L = utils.Logger('IVV.updateImage>helper');
 ind = self.CurrentVoxelIndex;
 xysel = self.ProjView.XYSel;
 xzsel = self.ProjView.XZSel;
@@ -48,7 +48,7 @@ if self.IsLocked
    showXYPage;
    showXZPage;
    showYZPage;
-elseif reg ~= vpp.ProjViewRegion.Outside
+elseif reg ~= ProjViewRegion.Outside
    cFun = @(c) contains(char(reg), c);
    if cFun('X')
       showYZPage;

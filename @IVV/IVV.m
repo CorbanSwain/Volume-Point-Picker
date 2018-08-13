@@ -4,11 +4,11 @@ classdef IVV < handle
    
    properties
       DoAllowInteraction (1, 1) logical = false
-      ProjView vpp.ProjectionView
+      ProjView ProjectionView
       FileName
       InitialPosition
       IsSettingPoint = false
-      CurrentRegion = vpp.ProjViewRegion.XY
+      CurrentRegion = ProjViewRegion.XY
       VolIm
    end
    
@@ -19,7 +19,7 @@ classdef IVV < handle
          'x', 0.5, 'y', 0.5, 'z', 0.5, ...
          'xLock', false, 'yLock', false, 'zLock', false, ...
          'xClip', 0, 'yClip', 0, 'zClip', -1)
-      Parent vpp.VolumePointPicker
+      Parent VolumePointPicker
       Figure
       Axis
       Image
@@ -58,9 +58,9 @@ classdef IVV < handle
          end
          
          % self.onMouseMove('clear');
-         %          self.updateImage('clear');
-         %          self.updateCrosshair('clear');
-         %          self.updateImageRegion('clear');
+         % self.updateImage('clear');
+         % self.updateCrosshair('clear');
+         % self.updateImageRegion('clear');
          
          self.Parent = parent;
       end
@@ -118,7 +118,7 @@ classdef IVV < handle
       %% Parent Property
       function didSetParent(self)
          disp('Setint up projection view');
-         self.ProjView = vpp.ProjectionView(self.VolIm);
+         self.ProjView = ProjectionView(self.VolIm);
       end
       
       %% Figure Property
@@ -141,8 +141,8 @@ classdef IVV < handle
          hold(ax, 'on');
          ax.Visible = 'off';
          ax.Box = 'off';
-         ax.DataAspectRatio = [1 1 1];
-         ax.DataAspectRatioMode = 'manual';
+%          ax.DataAspectRatio = [1 1 1];
+%          ax.DataAspectRatioMode = 'manual';
          ax.XLim = [1 - 0.5, size(self.ProjView.Image, 2) + 0.5];
          ax.YLim = [1 - 0.5,  size(self.ProjView.Image, 1) + 0.5];
          ax.XTick = [];
@@ -217,7 +217,7 @@ classdef IVV < handle
          function updateP(x, ir)
             lockParam = [x 'Lock'];
             clipParam = [x 'Clip'];
-            if ~P.(lockParam) && mouseReg ~= vpp.ProjViewRegion.(ir)
+            if ~P.(lockParam) && mouseReg ~= ProjViewRegion.(ir)
                P.(x) = mouseP.(x);
                P.(clipParam) = mouseP.(clipParam);
             end
@@ -246,22 +246,6 @@ classdef IVV < handle
       %% CurrentRegion Property
       function out = get.CurrentRegionComputed(self)
          out = self.point2region(self.CurrentPoint);
-      end
-      
-      %% MOVE ME %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-      function reg = point2region(self, P)
-         inQuery = boolean([P.xClip, P.yClip, P.zClip]);
-         if sum(inQuery) == 1
-            if inQuery(3)
-               reg = vpp.ProjViewRegion.XY;
-            elseif inQuery(2)
-               reg = vpp.ProjViewRegion.XZ;
-            else
-               reg = vpp.ProjViewRegion.YZ;
-            end
-         else
-            reg = vpp.ProjViewRegion.Outside;
-         end
       end
       
       %% ImageViews
@@ -313,6 +297,23 @@ classdef IVV < handle
          self.Image.CData(self.ProjView.XYSel{:}) = in;
       end
       
+   end
+   
+   methods (Static)
+      function reg = point2region(P)
+         inQuery = boolean([P.xClip, P.yClip, P.zClip]);
+         if sum(inQuery) == 1
+            if inQuery(3)
+               reg = ProjViewRegion.XY;
+            elseif inQuery(2)
+               reg = ProjViewRegion.XZ;
+            else
+               reg = ProjViewRegion.YZ;
+            end
+         else
+            reg = ProjViewRegion.Outside;
+         end
+      end
    end
 end
 

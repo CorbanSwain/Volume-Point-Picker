@@ -1,5 +1,5 @@
 function updateImageRegion(self, varargin)
-% % L = utils.Logger('vpp.IVV.updateImageRegion');
+% % L = utils.Logger('IVV.updateImageRegion');
 % persistent t;
 % try
 %    if nargin == 2 && strcmpi(varargin{1}, 'clear')
@@ -25,7 +25,7 @@ helper(self);
 end
 
 function helper(self)
-%L = utils.Logger('vpp.IVV.updateImageRegion>helper');
+%L = utils.Logger('IVV.updateImageRegion>helper');
 %L.info('Updating IVV Region');
 PV = self.ProjView;
 reg = self.CurrentRegion;
@@ -42,7 +42,7 @@ if self.IsLocked
    self.ImageXYAlpha = 1;
    self.ImageXZAlpha = 1;
    self.ImageYZAlpha = 1;
-elseif reg == vpp.ProjViewRegion.Outside
+elseif reg == ProjViewRegion.Outside
    self.Image.CData = PV.Image;
    self.Image.AlphaData = PV.AlphaImage;
 else
