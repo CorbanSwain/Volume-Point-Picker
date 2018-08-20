@@ -33,7 +33,7 @@ function [val, S] = queryGetField(S, fieldName, default)
 %       
 %         qgf('magic', 7); % this wont be stored because localStruct.magic
 %                          % is already assigned.
-%         % >> localStruct
+%         localStruct
 %         % localStruct = 
 %         %
 %         %   struct with fields:
@@ -41,7 +41,7 @@ function [val, S] = queryGetField(S, fieldName, default)
 %         %     magic: [5x5 double]
 %
 %         qgf('x', 1:5);
-%         % >> localStruct
+%         localStruct
 %         % localStruct = 
 %         %
 %         %   struct with fields:
@@ -50,13 +50,13 @@ function [val, S] = queryGetField(S, fieldName, default)
 %         %         x: [1 2 3 4 5]
 %
 %         a = qgf('x', 6:10);
-%         % >> a
+%         a
 %         % a =
 %         %
 %         %     1    2    3    4    5
 %
 %         b = qgf('y', 99);
-%         % >> b
+%         b
 %         % b =
 %         %
 %         %     99

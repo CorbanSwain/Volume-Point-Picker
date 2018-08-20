@@ -1,6 +1,6 @@
 classdef ProjectionView < handle
-   %PROJECTIONVIEW Summary of this class goes here
-   %   Detailed explanation goes here
+%PROJECTIONVIEW Summary of this class goes here
+%   Detailed explanation goes here
    
    properties (Access = private)
       Cache
@@ -11,6 +11,7 @@ classdef ProjectionView < handle
       XZAlpha
       YZAlpha
       AlphaImage
+      ColorWeight = [1 1 0]
    end
    
    properties (Dependent)
@@ -30,20 +31,22 @@ classdef ProjectionView < handle
       %% Constructor
       function self = ProjectionView(volImage)
          self.Cache = cell(1, 4);
-         [self.Cache{:}] = utils.projectionView(volImage);
+         [self.Cache{:}] = utils.projectionView(volImage, 'ColorWeight', ...
+            self.ColorWeight);
          self.createAlpha(volImage);
       end
       
       %% Alpha Data
       function createAlpha(self, volImage)
-         pFun = @(dim) utils.alphaProject(volImage, dim);
+         pFun = @(dim) utils.alphaProject(volImage, dim, 'ColorWeight', ...
+            self.ColorWeight);
          self.XYAlpha = pFun(3);
-         self.XZAlpha = pFun(1)';
+         self.XZAlpha = permute(pFun(1), [2 1 3]);
          self.YZAlpha = pFun(2);
          
-         self.AlphaImage = self.AlphaData;
+         self.AlphaImage = zeros(size(self.AlphaData));
          function applyIm(s)
-            self.AlphaImage(self.([s 'Sel']){:}) = self.([s 'Alpha']);
+            self.AlphaImage(self.([s 'Sel']){1:2}) = self.([s 'Alpha']);
          end
          cellfun(@applyIm, {'XY', 'YZ', 'XZ'});
       end

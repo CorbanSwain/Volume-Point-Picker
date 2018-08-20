@@ -2,11 +2,11 @@ function [varargout] = affinewarp(A, RA, tform, varargin)
 %% Input Handling
 L = utils.Logger('utils.affinewarp');
 if nargin == 0
-    levelOld = L.globalWindowLevel;
+   levelOld = L.windowLevel;
    L.globalWindowLevel(L.ALL);
    L.info('Performing unit tests.');
-   L.globalWindowLevel(levelOld);
    unittest;
+   L.globalWindowLevel(levelOld);
    return
 end
 RB = parseInputs(varargin);

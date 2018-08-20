@@ -13,6 +13,11 @@ if ~strcmp(fileext, '.tif') && ~strcmp(fileext, '.tiff')
    filepath = strcat(filepath, '.tif');
 end
 
+if ndims(V) == 4
+   assert(size(V, 4) == 3, 'Input volume must have exactly 3 color chanels');
+   V = utils.cellmap(@(i) V(:, :, :, i), {1, 2, 3});
+end
+
 if iscell(V)
    L.assert(isvector(V) && length(V) == 3, ...
       'Incorrectly formated color volumes.');

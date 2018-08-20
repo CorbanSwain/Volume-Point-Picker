@@ -117,8 +117,14 @@ classdef IVV < handle
       
       %% Parent Property
       function didSetParent(self)
-         disp('Setint up projection view');
-         self.ProjView = ProjectionView(self.VolIm);
+         L = utils.Logger('IVV.didSetParent');
+         L.info('Setting up projection view');
+         try
+            self.ProjView = ProjectionView(self.VolIm);
+         catch ME
+            L.logException(ME)
+         end
+            
       end
       
       %% Figure Property
@@ -207,6 +213,7 @@ classdef IVV < handle
       function out = get.MouseRegion(self)
          out = self.point2region(self.MousePoint);
       end
+      
       %% CurrentPointComputed
       function out = get.CurrentPointComputed(self)
          P = self.CurrentPoint;
@@ -232,9 +239,10 @@ classdef IVV < handle
          out = round(out);
          
          % for debugging
-         utils.bound(out, 1, size(self.VolIm) + 1, 'CurrentVoxelIndex');
+         % utils.bound(out, 1, size(self.VolIm) + 1, 'CurrentVoxelIndex');
          
-         out = utils.bound(out, 1, size(self.VolIm));
+         sz = size(self.VolIm);
+         out = utils.bound(out, 1, sz(1:3));
       end
       
       %% CurrentVoxelValue Property
@@ -273,28 +281,28 @@ classdef IVV < handle
          out = self.Image.AlphaData(self.ProjView.YZSel{:});
       end
       
-      function set.ImageXZView(self, in)
-         self.Image.CData(self.ProjView.XZSel{:}) = in;
+      function set.ImageXZView(self, im)
+         self.Image.CData(self.ProjView.XZSel{:}) = im;
       end
       
-      function set.ImageYZView(self, in)
-         self.Image.CData(self.ProjView.YZSel{:}) = in;
+      function set.ImageYZView(self, im)
+         self.Image.CData(self.ProjView.YZSel{:}) = im;
       end
       
-      function set.ImageXYAlpha(self, in)
-         self.Image.AlphaData(self.ProjView.XYSel{:}) = in;
+      function set.ImageXYAlpha(self, im)
+         self.Image.AlphaData(self.ProjView.XYSel{:}) = im;
       end
       
-      function set.ImageXZAlpha(self, in)
-         self.Image.AlphaData(self.ProjView.XZSel{:}) = in;
+      function set.ImageXZAlpha(self, im)
+         self.Image.AlphaData(self.ProjView.XZSel{:}) = im;
       end
       
-      function set.ImageYZAlpha(self, in)
-         self.Image.AlphaData(self.ProjView.YZSel{:}) = in;
+      function set.ImageYZAlpha(self, im)
+         self.Image.AlphaData(self.ProjView.YZSel{:}) = im;
       end
       
-      function set.ImageXYView(self, in)
-         self.Image.CData(self.ProjView.XYSel{:}) = in;
+      function set.ImageXYView(self, im)
+         self.Image.CData(self.ProjView.XYSel{:}) = im;
       end
       
    end

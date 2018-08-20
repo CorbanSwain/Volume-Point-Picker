@@ -59,7 +59,7 @@ classdef Logger < handle
       function val = globalPath(val)
          persistent pVal;
          if nargin
-            if strcmpi('clear', val)
+            if strcmpi('clear', val) || isempty(val)
                pVal = [];
             else
                mustBeWritablePath(val);
@@ -72,7 +72,7 @@ classdef Logger < handle
       function val = globalFormat(val)
          persistent pVal;
          if nargin
-            if strcmpi('clear', val)
+            if strcmpi('clear', val) || isempty(val)
                pVal = [];
             else
                mustBeStringLike(val);
@@ -85,7 +85,7 @@ classdef Logger < handle
       function val = globalStampFormat(val)
          persistent pVal;
          if nargin
-            if strcmpi('clear', val)
+            if strcmpi('clear', val) || isempty(val)
                pVal = [];
             else
                mustBeStringLike(val);
@@ -98,7 +98,7 @@ classdef Logger < handle
       function val = globalDatetimeFormat(val)
          persistent pVal;
          if nargin
-            if strcmpi('clear', val)
+            if strcmpi('clear', val) || isempty(val)
                pVal = [];
             else
                mustBeDatestrFormat(val);
@@ -111,7 +111,7 @@ classdef Logger < handle
       function val = globalIndentMode(val)
          persistent pVal;
          if nargin
-            if strcmpi('clear', val)
+            if strcmpi('clear', val) || isempty(val)
                pVal = [];
             else
                mustBeInstance(val, 'utils.IndentMode');
@@ -124,7 +124,7 @@ classdef Logger < handle
       function val = globalWindowLevel(val)
          persistent pVal;
          if nargin
-            if strcmpi('clear', val)
+            if strcmpi('clear', val) || isempty(val)
                pVal = [];
             else
                mustBeInstance(val, 'utils.LogLevel');
@@ -137,7 +137,7 @@ classdef Logger < handle
       function val = globalLevel(val)
          persistent pVal;
          if nargin
-            if strcmpi('clear', val)
+            if strcmpi('clear', val) || isempty(val)
                pVal = [];
             else
                mustBeInstance(val, 'utils.LogLevel');
@@ -150,7 +150,7 @@ classdef Logger < handle
       function val = globalMaxScriptNameLength(val)
          persistent pVal;
          if nargin
-            if strcmpi('clear', val)
+            if strcmpi('clear', val) || isempty(val)
                pVal = [];
             else
                mustBeInteger(val);
@@ -164,7 +164,7 @@ classdef Logger < handle
       function val = globalIndentLevel(val)
          persistent pVal;
          if nargin
-            if strcmpi('clear', val)
+            if strcmpi('clear', val) || isempty(val)
                pVal = [];
             else
                mustBeInteger(val);
@@ -178,7 +178,7 @@ classdef Logger < handle
       function val = globalDoAutolog(val)
          persistent pVal;
          if nargin
-            if strcmpi('clear', val)
+            if strcmpi('clear', val) || isempty(val)
                pVal = [];
             else
                mustBeBoolean(val);
@@ -191,7 +191,7 @@ classdef Logger < handle
       function val = globalDoAutoLineNumber(val)
          persistent pVal;
          if nargin
-            if strcmpi('clear', val)
+            if strcmpi('clear', val) || isempty(val)
                pVal = [];
             else
                mustBeBoolean(val);

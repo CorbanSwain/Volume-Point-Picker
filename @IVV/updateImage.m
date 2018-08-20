@@ -25,7 +25,8 @@ helper(self);
 end
 
 function helper(self)
-%L = utils.Logger('IVV.updateImage>helper');
+L = utils.Logger('IVV.updateImage>helper');
+L.debug('updatingImage');
 ind = self.CurrentVoxelIndex;
 xysel = self.ProjView.XYSel;
 xzsel = self.ProjView.XZSel;
@@ -33,15 +34,16 @@ yzsel = self.ProjView.YZSel;
 reg = self.CurrentRegion;
 
    function showXYPage
-      self.Image.CData(xysel{:}) = squeeze(self.VolIm(:, :, ind(3)));
+      self.Image.CData(xysel{:}) = squeeze(self.VolIm(:, :, ind(3), :));
    end
 
    function showXZPage
-      self.Image.CData(xzsel{:}) = squeeze(self.VolIm(ind(1), :, :))';
+      self.Image.CData(xzsel{:}) ...
+         = permute(squeeze(self.VolIm(ind(1), :, :, :)), [2 1 3]);
    end
 
    function showYZPage
-      self.Image.CData(yzsel{:}) = squeeze(self.VolIm(:, ind(2), :));
+      self.Image.CData(yzsel{:}) = squeeze(self.VolIm(:, ind(2), :, :));
    end
 
 if self.IsLocked

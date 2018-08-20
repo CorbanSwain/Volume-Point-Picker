@@ -25,8 +25,8 @@ helper(self);
 end
 
 function helper(self)
-%L = utils.Logger('IVV.updateImageRegion>helper');
-%L.info('Updating IVV Region');
+L = utils.Logger('IVV.updateImageRegion>helper');
+L.debug('Updating IVV Region to %s', self.CurrentRegion);
 PV = self.ProjView;
 reg = self.CurrentRegion;
 

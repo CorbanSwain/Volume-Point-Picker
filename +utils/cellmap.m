@@ -4,5 +4,6 @@ if nargout < 1
    varargout = {};
    evaluate();
 else
+   varargout = cell(1, nargout);
    [varargout{:}] = evaluate();
 end
