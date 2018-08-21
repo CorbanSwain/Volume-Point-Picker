@@ -1,4 +1,6 @@
 function onMouseClick(self)
+L = utils.Logger('IVV.onMouseClick');
+L.debug('Mouse Clicked');
 if ~self.DoAllowInteraction, return; end
 
 self.DoAllowInteraction = false;
@@ -25,20 +27,23 @@ elseif reg ~= ProjViewRegion.Outside
       case ProjViewRegion.XY
          P.xLock = true;
          P.yLock = true;
-         vec = squeeze(self.VolIm(ind(1), ind(2), :));
+         vec = self.VolIm(ind(1), ind(2), :, :);
          pstr = 'z';
       case ProjViewRegion.XZ
          P.xLock = true;
          P.zLock = true;
-         vec = squeeze(self.VolIm(:, ind(2), ind(3)));
+         vec = self.VolIm(:, ind(2), ind(3), :);
          pstr = 'y';
       case ProjViewRegion.YZ
          P.yLock = true;
          P.zLock = true;
-         vec = squeeze(self.VolIm(ind(1), :, ind(3)));
+         vec = self.VolIm(ind(1), :, ind(3), :);
          pstr = 'x';
    end
-   vec = im2double(vec);
+   if ndims(vec) == 4
+      vec = utils.rgb2gray3d(vec, self.ColorWeight);
+   end
+   vec = double(squeeze(vec));
    if ~all(diff(vec) == 0)
       [~, a] = max(vec);
       [~, b] = max(flip(vec));

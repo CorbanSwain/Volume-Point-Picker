@@ -25,7 +25,8 @@ helper(self);
 end
 
 function helper(self)
-%L = utils.Logger('IVV.updateCrosshair>helper');
+L = utils.Logger('IVV.updateCrosshair>helper');
+% L.debug('Updating Crosshair');
 xh = self.Crosshair;
 xhGap = self.CrosshairGap;
 P = self.CurrentPoint;

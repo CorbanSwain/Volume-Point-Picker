@@ -26,7 +26,7 @@ end
 
 function helper(self)
 L = utils.Logger('IVV.updateImage>helper');
-L.debug('updatingImage');
+% L.debug('updatingImage');
 ind = self.CurrentVoxelIndex;
 xysel = self.ProjView.XYSel;
 xzsel = self.ProjView.XZSel;

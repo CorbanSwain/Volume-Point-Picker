@@ -1,6 +1,7 @@
 function onMouseMove(self, varargin)
-
+L = utils.Logger('IVV.onMouseMove');
 if self.DoAllowInteraction
+   % L.debug('updatingCurrentPoint');
    self.CurrentPoint = self.CurrentPointComputed;
 end
 

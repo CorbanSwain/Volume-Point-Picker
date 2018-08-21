@@ -31,6 +31,7 @@ classdef IVV < handle
       IsLocked
       CrosshairGap
       Colormap
+      ColorWeight
       MousePoint
       MouseRegion
       CurrentPointComputed
@@ -49,13 +50,12 @@ classdef IVV < handle
       %% Constructor
       function self = IVV(parent)
          didSetVars = {'Parent', 'Figure', 'Axis', 'Image', ...
-            'Crosshair', 'CurrentPoint'};
-         cellfun(@(v) addDidSet(v), didSetVars);
-         
+            'Crosshair', 'CurrentPoint'};         
          function addDidSet(varname)
             funcname = ['didSet', varname];
             self.addlistener(varname, 'PostSet', @(~, ~) self.(funcname));
          end
+         cellfun(@(v) addDidSet(v), didSetVars);
          
          % self.onMouseMove('clear');
          % self.updateImage('clear');
@@ -95,6 +95,7 @@ classdef IVV < handle
       %% Interaction Functions
       onMouseClick(self)
       onMouseMove(self, varargin)
+      onMouseScroll(self, scrollCOunt)
       
       %% Graphics Functions
       updateImage(self, varargin)
@@ -103,9 +104,18 @@ classdef IVV < handle
       
       %% CurrentPoint Property
       function didSetCurrentPoint(self)
-         if ~(self.CurrentRegion == self.CurrentRegionComputed ...
-               || self.IsLocked)
-            fprintf('%s ... %s\n', self.CurrentRegion, self.CurrentRegionComputed)
+         L = utils.Logger('IVV.didSetCurrentPoint');
+         L.debug('Current Region Comp: %10s | Saved: %10s', ...
+            self.CurrentRegionComputed, self.CurrentRegion);
+         cp = self.CurrentPoint;
+         cpc = self.CurrentPointComputed;
+         L.debug(['Curent Point Comp: (%5.1f, %5.1f, %5.1f) (%1d, %1d, %1d) ', ...
+            '| Saved: (%5.1f, %5.1f, %5.1f) (%1d %1d %1d)'], ...
+            cp.x, cp.y, cp.z, cp.xClip, cp.yClip, cp.zClip, ...
+            cpc.x, cpc.y, cpc.z, cpc.xClip, cpc.yClip, cpc.zClip);
+         if self.CurrentRegion ~= self.CurrentRegionComputed && ~self.IsLocked
+            L.debug('%s ... %s\n', ...
+               self.CurrentRegion, self.CurrentRegionComputed)
             self.CurrentRegion = self.CurrentRegionComputed;
             self.updateImageRegion;
          end
@@ -119,17 +129,13 @@ classdef IVV < handle
       function didSetParent(self)
          L = utils.Logger('IVV.didSetParent');
          L.info('Setting up projection view');
-         try
-            self.ProjView = ProjectionView(self.VolIm);
-         catch ME
-            L.logException(ME)
-         end
-            
+         self.ProjView = ProjectionView(self.VolIm, self.ColorWeight); 
       end
       
       %% Figure Property
       function didSetFigure(self)
          f = self.Figure;
+         f.DeleteFcn = @(~, ~) self.Parent.onIVVClose;
          f.Name = ['VPP - 3D Slice Viewer - ', self.FileName];
          if ~isempty(self.InitialPosition)
             f.Position = self.InitialPosition;
@@ -137,8 +143,9 @@ classdef IVV < handle
          f.MenuBar = 'none';
          f.IntegerHandle = 'off';
          f.Color =  self.Parent.UIFigure.Color;
-         self.Figure.WindowButtonMotionFcn = @(~, ~) self.onMouseMove;
-         self.Figure.DeleteFcn = @(~, ~) self.Parent.onIVVClose;
+         f.WindowButtonMotionFcn = @(~, ~) self.onMouseMove;
+         f.WindowScrollWheelFcn ...
+            = @(~, cbd) self.onMouseScroll(cbd.VerticalScrollCount);
       end
       
       %% Axis Property
@@ -147,8 +154,8 @@ classdef IVV < handle
          hold(ax, 'on');
          ax.Visible = 'off';
          ax.Box = 'off';
-%          ax.DataAspectRatio = [1 1 1];
-%          ax.DataAspectRatioMode = 'manual';
+         ax.DataAspectRatio = [1 1 1];
+         ax.DataAspectRatioMode = 'manual';
          ax.XLim = [1 - 0.5, size(self.ProjView.Image, 2) + 0.5];
          ax.YLim = [1 - 0.5,  size(self.ProjView.Image, 1) + 0.5];
          ax.XTick = [];
@@ -186,10 +193,16 @@ classdef IVV < handle
       end
       %% VolIm Property
       function out = get.VolIm(self)
+         L = utils.Logger('IVV.get.VolIm');
          if isempty(self.VolIm)
-            V = im2double(self.Parent.volImage);
-            V = utils.fullscaleim(V);
-            self.VolIm = utils.double2im(V, 'uint8');
+            V = self.Parent.volImage;
+            L.info('Original volume size: [%s]', num2str(size(V)));
+            V = utils.downsample(V, ceil(size(V) / 750));
+            L.info('New volume size: [%s]', num2str(size(V)));
+%             V = im2double(V);
+%             V = utils.fullscaleim(V);
+%             V= utils.double2im(V, 'uint8');
+            self.VolIm = V;
          end
          out = self.VolIm;
       end
@@ -218,18 +231,16 @@ classdef IVV < handle
       function out = get.CurrentPointComputed(self)
          P = self.CurrentPoint;
          mouseP = self.MousePoint;
-         mouseReg = self.MouseRegion;
          xyz = {'x', 'y', 'z'};
-         invReg = {'YZ', 'XZ', 'XY'};
-         function updateP(x, ir)
+         function updateP(x)
             lockParam = [x 'Lock'];
             clipParam = [x 'Clip'];
-            if ~P.(lockParam) && mouseReg ~= ProjViewRegion.(ir)
+            if ~P.(lockParam) && ~mouseP.(clipParam)
                P.(x) = mouseP.(x);
-               P.(clipParam) = mouseP.(clipParam);
             end
+            P.(clipParam) = mouseP.(clipParam);
          end
-         utils.cellmap(@updateP, xyz, invReg);
+         utils.cellmap(@updateP, xyz);
          out = P;
       end
       
@@ -256,6 +267,13 @@ classdef IVV < handle
          out = self.point2region(self.CurrentPoint);
       end
       
+      %% ColorWeight
+      function out = get.ColorWeight(self)
+         L = utils.Logger('IVV.get.ColorWeight');
+         out = self.Parent.ColorWeight;
+         L.info('Getting ColorWeight > [%s]', num2str(out));
+      end
+      
       %% ImageViews
       function out = get.ImageXYView(self)
          out = self.Image.CData(self.ProjView.XYSel{:});
@@ -270,17 +288,21 @@ classdef IVV < handle
       end
       
       function out = get.ImageXYAlpha(self)
-         out = self.Image.AlphaData(self.ProjView.XYSel{:});
+         out = self.Image.AlphaData(self.ProjView.XYSel{1:2});
       end
       
       function out = get.ImageXZAlpha(self)
-         out = self.Image.AlphaData(self.ProjView.XZSel{:});
+         out = self.Image.AlphaData(self.ProjView.XZSel{1:2});
       end
       
       function out = get.ImageYZAlpha(self)
-         out = self.Image.AlphaData(self.ProjView.YZSel{:});
+         out = self.Image.AlphaData(self.ProjView.YZSel{1:2});
       end
       
+      function set.ImageXYView(self, im)
+         self.Image.CData(self.ProjView.XYSel{:}) = im;
+      end
+
       function set.ImageXZView(self, im)
          self.Image.CData(self.ProjView.XZSel{:}) = im;
       end
@@ -290,19 +312,15 @@ classdef IVV < handle
       end
       
       function set.ImageXYAlpha(self, im)
-         self.Image.AlphaData(self.ProjView.XYSel{:}) = im;
+         self.Image.AlphaData(self.ProjView.XYSel{1:2}) = im;
       end
       
       function set.ImageXZAlpha(self, im)
-         self.Image.AlphaData(self.ProjView.XZSel{:}) = im;
+         self.Image.AlphaData(self.ProjView.XZSel{1:2}) = im;
       end
       
       function set.ImageYZAlpha(self, im)
-         self.Image.AlphaData(self.ProjView.YZSel{:}) = im;
-      end
-      
-      function set.ImageXYView(self, im)
-         self.Image.CData(self.ProjView.XYSel{:}) = im;
+         self.Image.AlphaData(self.ProjView.YZSel{1:2}) = im;
       end
       
    end
@@ -322,6 +340,28 @@ classdef IVV < handle
             reg = ProjViewRegion.Outside;
          end
       end
+      
+      function other = getother(s)
+         L = utils.Logger('IVV.getother');
+         switch lower(char(s))
+            case 'x'
+               other = 'YZ';
+            case 'y'
+               other = 'XZ';
+            case 'z'
+               other = 'XY';
+            case 'xy'
+               other = 'z';
+            case 'xz'
+               other = 'y';
+            case 'yz'
+               other = 'x';
+            otherwise
+               L.warn('Unexpected value: %s', s);
+               other = 'xyz';
+         end            
+      end
+      
    end
 end
 

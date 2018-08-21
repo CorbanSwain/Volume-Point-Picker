@@ -11,7 +11,7 @@ classdef ProjectionView < handle
       XZAlpha
       YZAlpha
       AlphaImage
-      ColorWeight = [1 1 0]
+      ColorWeight
    end
    
    properties (Dependent)
@@ -29,8 +29,9 @@ classdef ProjectionView < handle
    
    methods
       %% Constructor
-      function self = ProjectionView(volImage)
+      function self = ProjectionView(volImage, colorwt)
          self.Cache = cell(1, 4);
+         self.ColorWeight = colorwt;
          [self.Cache{:}] = utils.projectionView(volImage, 'ColorWeight', ...
             self.ColorWeight);
          self.createAlpha(volImage);
