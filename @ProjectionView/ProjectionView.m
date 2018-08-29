@@ -7,6 +7,7 @@ classdef ProjectionView < handle
    end
    
    properties
+      VolIm % FIXME - this shouldne be here ... avoid duplicating it
       XYAlpha
       XZAlpha
       YZAlpha
@@ -25,6 +26,9 @@ classdef ProjectionView < handle
       XYSel
       XZSel
       YZSel
+      xWorldLims
+      yWorldLims
+      zWorldLims
    end
    
    methods
@@ -35,6 +39,7 @@ classdef ProjectionView < handle
          [self.Cache{:}] = utils.projectionView(volImage, 'ColorWeight', ...
             self.ColorWeight);
          self.createAlpha(volImage);
+         self.VolIm = volImage;
       end
       
       %% Alpha Data
@@ -52,8 +57,9 @@ classdef ProjectionView < handle
          cellfun(@applyIm, {'XY', 'YZ', 'XZ'});
       end
       
-      %% Conversion Method
+      %% Conversion Methods
       worldP = proj2world(self, x, y)
+      [xData, yData] = world2proj(self, point)
       
       %% Dependent Methods
       function out = get.Image(self)
@@ -70,8 +76,8 @@ classdef ProjectionView < handle
       
       function out = get.Sels(self)
          out = self.Cache{3};
-      end
-      
+      end          
+
       function out = get.XYBounds(self)
          out = self.Bounds{1};
       end
@@ -95,6 +101,18 @@ classdef ProjectionView < handle
       function out = get.YZSel(self)
          out = self.Sels{3};
       end
+      
+      function out = get.xWorldLims(self)
+         out = [0.5, size(self.VolIm, 2)];
+      end    
+      
+      function out = get.yWorldLims(self)
+         out = [0.5, size(self.VolIm, 1)];
+      end        
+
+      function out = get.zWorldLims(self)
+         out = [0.5, size(self.VolIm, 3)];
+      end 
    end
 end
 

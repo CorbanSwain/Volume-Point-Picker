@@ -10,6 +10,7 @@ classdef IVV < handle
       IsSettingPoint = false
       CurrentRegion = ProjViewRegion.XY
       VolIm
+      IVVState
    end
    
    properties (SetObservable)
@@ -24,6 +25,7 @@ classdef IVV < handle
       Axis
       Image
       Crosshair
+      DropPinCollection
    end
    
    properties (Dependent)
@@ -44,11 +46,15 @@ classdef IVV < handle
       ImageXYAlpha
       ImageXZAlpha
       ImageYZAlpha
+      xPointLims
+      yPointLims
+      zPointLims
    end
    
    methods
       %% Constructor
       function self = IVV(parent)
+         %%% didSet
          didSetVars = {'Parent', 'Figure', 'Axis', 'Image', ...
             'Crosshair', 'CurrentPoint'};         
          function addDidSet(varname)
@@ -57,12 +63,12 @@ classdef IVV < handle
          end
          cellfun(@(v) addDidSet(v), didSetVars);
          
-         % self.onMouseMove('clear');
-         % self.updateImage('clear');
-         % self.updateCrosshair('clear');
-         % self.updateImageRegion('clear');
+         %%% willSet
+         willSetVars = {'IVVState'};
          
          self.Parent = parent;
+         self.DropPinCollection = DropPinCollection(self);
+         self.IVVState = {'projection', 'projection', 'projection'};
       end
       
       %% Figure-like Functions
@@ -90,6 +96,11 @@ classdef IVV < handle
       function showCrosshair(self)
          assert(isvalid(self.Image));
          self.Crosshair = arrayfun(@(~) plot(self.Axis, 0, '-'), 1:12);
+      end
+      
+      %% DropPin Function
+      function addDropPin(self, point)
+         self.DropPinCollection.addDropPin(point); 
       end
       
       %% Interaction Functions
@@ -121,6 +132,7 @@ classdef IVV < handle
          end
          self.updateCrosshair;
          self.updateImage;
+         self.DropPinCollection.refreshVisibility(self.IVVState);
       end
       
       
@@ -214,7 +226,7 @@ classdef IVV < handle
       
       %% CrosshairGap Property
       function out = get.CrosshairGap(self)
-         out = self.Parent.crosshairGap;
+         out = min(size(self.VolIm)) * 0.1;
       end
       
       %% MousePoint
@@ -225,7 +237,7 @@ classdef IVV < handle
       
       function out = get.MouseRegion(self)
          out = self.point2region(self.MousePoint);
-      end
+      end      
       
       %% CurrentPointComputed
       function out = get.CurrentPointComputed(self)
@@ -259,7 +271,7 @@ classdef IVV < handle
       %% CurrentVoxelValue Property
       function out = get.CurrentVoxelValue(self)
          ind = num2cell(self.CurrentVoxelIndex);
-         out = self.VolImage(ind{:});
+         out = self.VolIme(ind{:});
       end
       
       %% CurrentRegion Property
@@ -267,14 +279,28 @@ classdef IVV < handle
          out = self.point2region(self.CurrentPoint);
       end
       
-      %% ColorWeight
+      %% ColorWeight Property
       function out = get.ColorWeight(self)
          L = utils.Logger('IVV.get.ColorWeight');
          out = self.Parent.ColorWeight;
          L.info('Getting ColorWeight > [%s]', num2str(out));
       end
       
-      %% ImageViews
+      %% _PointLims Properties
+      function out = get.xPointLims(self)
+         out = [0.5, size(self.VolIm, 2)];
+      end    
+      
+      function out = get.yPointLims(self)
+         out = [0.5, size(self.VolIm, 1)];
+      end        
+
+      function out = get.zPointLims(self)
+         out = [0.5, size(self.VolIm, 3)];
+      end        
+
+
+      %% Image__Views Properties
       function out = get.ImageXYView(self)
          out = self.Image.CData(self.ProjView.XYSel{:});
       end
@@ -360,6 +386,26 @@ classdef IVV < handle
                L.warn('Unexpected value: %s', s);
                other = 'xyz';
          end            
+      end
+      
+      function idx = xyzGetIndex(s)
+         L = utils.Logger('IVV.xyzGetIndex');
+         switch lower(char(s))
+            case 'x'
+               idx = 1;
+            case 'y'
+               idx = 2;
+            case 'z'
+               idx = 3;
+            case 'xy'
+               idx = 1;
+            case 'xz'
+               idx = 2;
+            case 'yz'
+               idx = 3;
+            otherwise
+               L.error('Unexpected value: %s', s);
+         end   
       end
       
    end

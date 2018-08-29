@@ -45,8 +45,10 @@ if self.IsLocked
 elseif reg == ProjViewRegion.Outside
    self.Image.CData = PV.Image;
    self.Image.AlphaData = PV.AlphaImage;
+   [self.IVVState{:}] = deal('projection');
 else
    s = char(reg);
+   self.IVVState{self.xyzGetIndex(s)} = 'projection';
    showMIP(s);
    showAlpha(s);
    

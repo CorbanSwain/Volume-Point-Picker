@@ -19,6 +19,7 @@ if self.IsLocked
       pause(0.2)
       [xh(:).Visible] = deal('on');
    end
+   self.addDropPin(P);
    self.Parent.addPoint(self.CurrentVoxelIndex);
    [P.xLock, P.yLock, P.zLock] = deal(false);
 elseif reg ~= ProjViewRegion.Outside
@@ -54,5 +55,6 @@ elseif reg ~= ProjViewRegion.Outside
 end
 self.CurrentPoint = P;
 self.updateImageRegion;
+self.DropPinCollection.refreshVisibility(self.IVVState);
 self.DoAllowInteraction = true;
 end
