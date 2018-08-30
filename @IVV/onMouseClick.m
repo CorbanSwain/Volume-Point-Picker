@@ -20,7 +20,7 @@ if self.IsLocked
       [xh(:).Visible] = deal('on');
    end
    self.addDropPin(P);
-   self.Parent.addPoint(self.CurrentVoxelIndex);
+   self.Parent.addPoint(P);
    [P.xLock, P.yLock, P.zLock] = deal(false);
 elseif reg ~= ProjViewRegion.Outside
    ind = self.CurrentVoxelIndex;

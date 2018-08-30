@@ -66,8 +66,8 @@ classdef IVV < handle
          %%% willSet
          willSetVars = {'IVVState'};
          
-         self.Parent = parent;
          self.DropPinCollection = DropPinCollection(self);
+         self.Parent = parent;
          self.IVVState = {'projection', 'projection', 'projection'};
       end
       
@@ -101,6 +101,13 @@ classdef IVV < handle
       %% DropPin Function
       function addDropPin(self, point)
          self.DropPinCollection.addDropPin(point); 
+      end
+      
+      function initializeDropPins(self, points)
+         for i = 1:length(points) 
+            self.DropPinCollection.addDropPin(points(i));
+         end
+         self.DropPinCollection.refreshVisibility(self.IVVState);
       end
       
       %% Interaction Functions
