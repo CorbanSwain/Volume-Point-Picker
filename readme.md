@@ -1,4 +1,4 @@
-# Volume Point Picker
+# Volume Point Picker [0.0.1.1 - Development]
 
 *A MATLAB-based application for selecting and annotating points in 3D
 volumetric images.*
@@ -81,7 +81,7 @@ to the current slice plane to simulate a sphere.
 
 ## Screenshots
 
-### Main Volume Point Picker application window after startup
+#### Main Volume Point Picker application window after startup
 ![Main Volume Point Picker Application Window](images/app_window_initial.png)
 
 #### Interactive Volume Viewer with selected points in C. elegans image.
