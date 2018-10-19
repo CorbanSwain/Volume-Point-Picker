@@ -10,19 +10,19 @@ classdef FigureBuilder
         FigureHandle
     end % private properties
     methods
-        function [obj, figureHandle] = figure(obj)
+        function [obj, h] = figure(obj)
             if ~isempty(obj.Number)
                 obj.FigureHandle = figure(obj.Number);
             else
                 obj.FigureHandle = figure;
             end
-            figureHandle = obj.FigureHandle;
-            clf(figureHandle);
+            h = obj.FigureHandle;
+            clf(h);
             if ~isempty(obj.Name)
-                figureHandle.Name = obj.Name;
+                h.Name = obj.Name;
             end
             if  ~isempty(obj.Position)
-                figureHandle.Position = obj.Position;
+                h.Position = obj.Position;
             end
             if prod(obj.SubplotSize) < length(obj.PlotBuilders)
                 error(['The subplot dimensions are too small ', ...

@@ -532,6 +532,30 @@ classdef Logger < handle
          end
       end
       
+      function logLine(self, lineType)
+         if nargin < 2
+            lineType = '-';
+         end
+         switch lineType
+            case 'v'
+               self.info(['\\/ \\/ \\/ \\/ \\/ \\/ \\/ \\/ \\/ \\/ \\/', ...
+                  ' \\/ \\/ \\/ \\/ \\/ \\/ \\/ \\/ \\/ \\/']);
+            case '^'
+               self.info(['/\\ /\\ /\\ /\\ /\\ /\\ /\\ /\\ /\\ /\\ /\\', ...
+                  ' /\\ /\\ /\\ /\\ /\\ /\\ /\\ /\\ /\\ /\\']);
+            case '|'
+               self.info(['|||||||||||||||||||||||||||||||||||||||||||', ...
+                  '|||||||||||||||||||']);
+            otherwise
+               self.info(['-------------------------------------------', ...
+                  '-------------------']);
+         end
+      end
+      
+      function logline(self, varargin)
+         self.logLine(varargin{:});
+      end
+      
       logException(self, level, lineNum, ME)
       
       assert(self, varargin)
