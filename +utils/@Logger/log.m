@@ -92,6 +92,7 @@ else
       x = s.(fnames{iField});
       
       if (ischar(x) && isvector(x)) || (isstring(x) && isscalar(x))
+         x = strrep(string(x), '%', '%%%%');
          if ischar(x)
             str(iField) = sprintf("'%s'", x);
          else
@@ -108,6 +109,13 @@ else
          else
             str(iField) = sprintf("[%s]", join(string(x)));
          end
+      elseif iscell(x) && isvector(x) && length(x) < 5 
+         nVals = length(x);
+         innerStrings = strings(1, length(x));
+         for iVal = 1:nVals
+            innerStrings(iVal) = sprintf("[%s]", join(string(x{iVal})));
+         end
+         str(iField) = sprintf('{%s}', join(innerStrings, ', '));
       else
          str(iField) = sprintf("(%s %s array)", ...
             join(string(size(x)), "x"), class(x));

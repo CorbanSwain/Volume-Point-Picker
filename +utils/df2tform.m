@@ -14,9 +14,9 @@ switch nargin
 end
 
 % generating rotation matrices
-R2 = rotx(rotation(2)); % TWO
-R1 = roty(rotation(1)); % then ONE
-R3 = rotz(rotation(3)); % then THREE
+R1 = roty(rotation(1)); % dim 1 - y rotation
+R2 = rotx(rotation(2)); % dim 2 - x rotation
+R3 = rotz(rotation(3)); % dim 3 - z rotation
 [R, T] = deal(eye(4));
 R(1:3, 1:3) = R1 * R2 * R3; % rotating about y (dim1) then x (dim2) 
                             % then z (dim3).

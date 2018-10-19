@@ -1,0 +1,5 @@
+# Ignore image files
+*.mat
+*.tif
+*.nii
+!worm_test_image.tif 
