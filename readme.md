@@ -1,11 +1,11 @@
-# Volume Point Picker [0.0.1.1 - Development]
+# Volume Point Picker [0.0.2]
 
 *A MATLAB-based application for selecting and annotating points in 3D
 volumetric images.*
 
 * **This project is in active development. It will be buggy! Please let me know
 of any issues or suggestions you have while using it.**
-* Readme Last Updated: August 31, 2018
+* Readme Last Updated: October 19, 2018
 * Author: Corban Swain
 
 ## Getting Started
@@ -44,13 +44,16 @@ have a working implementation are indicated with a* ✅. *Feel free to raise a
 GitHub issue to suggest additional features.*
 
 #### File Handling
-- [ ] Load in `.mat` files.
+
+- [x] Load in `.mat` files.
 - [x] Load in `.tif` files.
+- [x] Load in `.nii` files.
 - [ ] Save an annotation session so it can be reopened at a later time.
 - [ ] Load in a past annotation session.
 - [ ] Open multiple images for annotation at once.
 
 #### Interactive Image Viewing and Annotation
+
 - [x] Show the three orthogonal maximum intensity projections of the volume.
 - [ ] Label the appropriate axes on each of the orthogonal projections
 - [x] Update the pointer location in real time based on the mouse location over
@@ -69,12 +72,14 @@ to the current slice plane to simulate a sphere.
 - [ ] Ability to select give an annotated point a specific color
 
 #### Annotation Export
+
 - [x] Real-time export of annotated points to workspace variables.
 - [x] Ability to copy the annotated points to the clipboard.
 - [ ] Save annotated points directly to a `.mat` file.
 
 
 ## Non-Feature To-dos
+
 - [ ] Add application documentation
 - [ ] Add documentation to all functions
 - [x] Add Readme to project
